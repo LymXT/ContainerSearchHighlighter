@@ -1,4 +1,6 @@
 {
+  "modmenu.nameTranslation.containersearch": "Container Search Highlighter",
+  "modmenu.descriptionTranslation.containersearch": "Клиентский мод для Minecraft 26.3 на Fabric: кэширование содержимого контейнеров и ESP-подсветка найденных предметов сквозь стены.",
   "key.containersearch.open_search": "Открыть поиск в контейнерах",
   "key.category.containersearch": "Container Search Highlighter",
   "gui.containersearch.title": "Поиск в контейнерах",

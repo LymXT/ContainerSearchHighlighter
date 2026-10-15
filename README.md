@@ -1,4 +1,4 @@
-# Container Search Highlighter v2.2 — Fabric Mod for Minecraft 26.3
+# Container Search Highlighter v2.3 — Fabric Mod for Minecraft 26.3
 
 [![Minecraft 26.3](https://img.shields.io/badge/Minecraft-26.3-brightgreen.svg)](https://minecraft.net/)
 [![Fabric API](https://img.shields.io/badge/Fabric-0.163.0+26.3-blue.svg)](https://fabricmc.net/)
@@ -49,7 +49,7 @@
 ```text
 ContainerSearchHighlighter/
 ├── build.gradle                                    # Loom 1.18.4, Fabric API 0.163.0+26.3
-├── gradle.properties                               # Version 2.2, archives_base_name = ContainerSearch
+├── gradle.properties                               # Version 2.3, archives_base_name = ContainerSearch
 ├── settings.gradle                                 # rootProject.name = 'ContainerSearch'
 ├── LICENSE                                         # MIT License
 └── src/
@@ -68,7 +68,7 @@ ContainerSearchHighlighter/
         │       └── mixin/
         │           └── AbstractContainerScreenMixin.java # Slot update interception mixin
         └── resources/
-            ├── fabric.mod.json                     # Mod metadata (id: "containersearch", version: "2.2")
+            ├── fabric.mod.json                     # Mod metadata (id: "containersearch", version: "2.3")
             ├── containersearch.mixins.json         # Mixin configuration
             └── assets/containersearch/
                 ├── icon.png                        # 128x128 mod icon
@@ -98,7 +98,7 @@ Run Gradle Wrapper in the project directory:
 
 The compiled mod JAR will be located at:
 ```text
-build/libs/ContainerSearch-2.2.jar
+build/libs/ContainerSearch-2.3.jar
 ```
 
 ---

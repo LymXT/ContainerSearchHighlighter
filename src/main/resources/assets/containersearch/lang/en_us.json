@@ -1,4 +1,6 @@
 {
+  "modmenu.nameTranslation.containersearch": "Container Search Highlighter",
+  "modmenu.descriptionTranslation.containersearch": "Client-side Fabric mod for Minecraft 26.3: caches container contents and highlights found items through walls with ESP.",
   "key.containersearch.open_search": "Open Container Search",
   "key.category.containersearch": "Container Search Highlighter",
   "gui.containersearch.title": "Container Search",

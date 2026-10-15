@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "containersearch",
-  "version": "2.2",
+  "version": "2.3",
   "name": "Container Search Highlighter",
-  "description": "Клієнтський мод для Minecraft 26.3 на Fabric: кешування вмісту контейнерів та ESP-підсвічування знайдених предметів крізь стіни.",
+  "description": "Client-side Fabric mod for Minecraft 26.3: caches container contents and highlights found items through walls with ESP.",
   "authors": [
     "LymXT"
   ],
