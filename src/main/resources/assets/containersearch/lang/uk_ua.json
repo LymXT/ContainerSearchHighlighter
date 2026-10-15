@@ -1,0 +1,9 @@
+{
+  "key.containersearch.open_search": "Відкрити пошук у контейнерах",
+  "key.category.containersearch": "Container Search Highlighter",
+  "gui.containersearch.title": "Пошук у контейнерах",
+  "gui.containersearch.hint": "Фільтр предметів за назвою чи ID...",
+  "gui.containersearch.search": "Знайти",
+  "gui.containersearch.clear": "Скинути",
+  "gui.containersearch.reset_highlight": "Скинути підсвічування"
+}

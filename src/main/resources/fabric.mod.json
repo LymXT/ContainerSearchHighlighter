@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "containersearch",
+  "version": "2.2",
+  "name": "Container Search Highlighter",
+  "description": "Клієнтський мод для Minecraft 26.3 на Fabric: кешування вмісту контейнерів та ESP-підсвічування знайдених предметів крізь стіни.",
+  "authors": [
+    "LymXT"
+  ],
+  "contact": {
+    "homepage": "https://github.com/LymXT/ContainerSearchHighlighter",
+    "sources": "https://github.com/LymXT/ContainerSearchHighlighter",
+    "issues": "https://github.com/LymXT/ContainerSearchHighlighter/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/containersearch/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.example.containersearch.ContainerSearchClient"
+    ]
+  },
+  "mixins": [
+    "containersearch.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

@@ -1,0 +1,25 @@
+# Gradle build and cache
+.gradle/
+build/
+bin/
+run/
+out/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.vscode/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Runtime config & cache directory
+config/
+run/

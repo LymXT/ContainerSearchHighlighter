@@ -1,0 +1,9 @@
+{
+  "key.containersearch.open_search": "Open Container Search",
+  "key.category.containersearch": "Container Search Highlighter",
+  "gui.containersearch.title": "Container Search",
+  "gui.containersearch.hint": "Filter items by name or ID...",
+  "gui.containersearch.search": "Search",
+  "gui.containersearch.clear": "Clear",
+  "gui.containersearch.reset_highlight": "Reset Highlight"
+}
