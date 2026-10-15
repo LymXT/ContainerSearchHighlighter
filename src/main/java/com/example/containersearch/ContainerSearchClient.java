@@ -24,19 +24,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Точка входу клієнтського мода Container Search Highlighter для Fabric 26.3.
+ * Client-side entry point for the Container Search Highlighter mod for Fabric 26.3.
  */
 public class ContainerSearchClient implements ClientModInitializer {
 
     public static final String MOD_ID = "containersearch";
 
-    /** Гаряча клавіша відкриття GUI пошуку (за замовчуванням клавіша 'H') */
+    /** Key mapping for opening the search GUI (bound to 'H' by default). */
     private static KeyMapping searchKey;
 
-    /** Поточний активний пошуковий рядок */
+    /** Currently active search query string. */
     private static String searchQuery = "";
 
-    /** Максимальний радіус підсвічування навколо гравця (64 блоки) */
+    /** Maximum search and highlight radius around the player (64 blocks). */
     public static final double MAX_RADIUS = 64.0;
     public static final double MAX_RADIUS_SQ = MAX_RADIUS * MAX_RADIUS;
 
@@ -63,7 +63,7 @@ public class ContainerSearchClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        // 1. Реєстрація гарячої клавіші 'H' для відкриття екрана пошуку
+        // 1. Register key mapping 'H' to open the search screen
         searchKey = KeyMappingHelper.registerKeyMapping(new KeyMapping(
                 "key.containersearch.open_search",
                 InputConstants.Type.KEYBOARD,
@@ -71,14 +71,14 @@ public class ContainerSearchClient implements ClientModInitializer {
                 KeyMapping.Category.MISC
         ));
 
-        // 2. Обробка натискання клавіші в ігровому циклі
+        // 2. Handle key presses during the client tick loop
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (searchKey.consumeClick()) {
                 client.setScreenAndShow(new SearchScreen());
             }
         });
 
-        // 3. Відстеження натискання правою кнопкою миші по блоках (контейнерах)
+        // 3. Track right-click interactions with container blocks
         UseBlockCallback.EVENT.register((player, level, hand, hitResult) -> {
             if (level.isClientSide()) {
                 ContainerTracker.onBlockInteracted(level, hitResult.getBlockPos());
@@ -86,7 +86,7 @@ public class ContainerSearchClient implements ClientModInitializer {
             return InteractionResult.PASS;
         });
 
-        // 4. Відстеження натискання правою кнопкою по сутностях-контейнерах (вагонетки із сундуком)
+        // 4. Track right-click interactions with container entities (e.g. chest minecarts)
         UseEntityCallback.EVENT.register((player, level, hand, entity, hitResult) -> {
             if (level.isClientSide()) {
                 ContainerTracker.onEntityInteracted(level, entity.blockPosition());
@@ -94,12 +94,12 @@ public class ContainerSearchClient implements ClientModInitializer {
             return InteractionResult.PASS;
         });
 
-        // 5. Видалення координат із кешу при руйнуванні блоку контейнера
+        // 5. Remove container coordinates from cache when broken
         ClientPlayerBlockBreakEvents.AFTER.register((level, player, pos, state) -> {
             ContainerCache.remove(level.dimension().identifier().toString(), pos);
         });
 
-        // 6. Завантаження збереженого JSON-кешу з диска при вході у світ або сервер
+        // 6. Load saved persistent JSON cache from disk on world/server join
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             ContainerCache.onJoin(client);
             if (client.player != null) {
@@ -112,15 +112,15 @@ public class ContainerSearchClient implements ClientModInitializer {
             }
         });
 
-        // 7. Збереження та очищення стану при відключенні від сервера/світу
+        // 7. Flush and reset state on server/world disconnect
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             ContainerCache.onDisconnect();
             searchQuery = "";
         });
 
-        // 8. ESP-підсвічування результатів пошуку через LevelRenderEvents та Gizmos API
+        // 8. ESP highlight rendering via LevelRenderEvents and Gizmos API
         LevelRenderEvents.BEFORE_GIZMOS.register(context -> {
-            // Якщо пошуковий рядок порожній або скинутий — підсвічування вимкнено
+            // If the search query is empty or reset, highlighting is disabled
             if (searchQuery.isEmpty()) {
                 return;
             }
@@ -139,12 +139,12 @@ public class ContainerSearchClient implements ClientModInitializer {
             for (Map.Entry<BlockPos, List<ItemInfo>> entry : containers.entrySet()) {
                 BlockPos pos = entry.getKey();
 
-                // Фільтрація за радіусом (64 блоки)
+                // Filter by radius (64 blocks)
                 if (pos.distToCenterSqr(playerPos) > MAX_RADIUS_SQ) {
                     continue;
                 }
 
-                // Якщо блок у завантаженому чанку вже став повітрям (зруйнований) — не підсвічуємо
+                // Skip if the block in loaded chunk has become air (broken)
                 if (level.isLoaded(pos) && level.getBlockState(pos).isAir()) {
                     continue;
                 }
@@ -158,7 +158,7 @@ public class ContainerSearchClient implements ClientModInitializer {
                     }
                 }
 
-                // Якщо знайдено предмет за запитом — підсвічуємо неоново-зеленим крізь стіни
+                // If item matches query, highlight with neon green through walls
                 if (matches) {
                     AABB aabb = RenderUtils.getContainerBoundingBox(level, pos);
                     RenderUtils.renderHighlightGizmo(aabb);

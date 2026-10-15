@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * Міксин для перехоплення оновлення та закриття екранів контейнерів (ScreenHandler / AbstractContainerScreen).
+ * Mixin to intercept container screen updates and closure (ScreenHandler / AbstractContainerScreen).
  */
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin {

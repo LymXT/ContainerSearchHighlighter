@@ -3,17 +3,17 @@ package com.example.containersearch;
 import java.util.Locale;
 
 /**
- * Зберігає метадані предмета для швидкого та нечутливого до регістру пошуку.
+ * Stores item metadata for fast and case-insensitive search queries.
  */
 public record ItemInfo(
-        String fullId,         // наприклад: "minecraft:diamond"
-        String pathId,         // наприклад: "diamond"
-        String displayName,    // відображуване ім'я (наприклад: "Алмаз", "Diamond")
-        String translationKey, // наприклад: "item.minecraft.diamond"
-        int count              // кількість у стеку
+        String fullId,         // e.g. "minecraft:diamond"
+        String pathId,         // e.g. "diamond"
+        String displayName,    // display name (e.g. "Diamond")
+        String translationKey, // e.g. "item.minecraft.diamond"
+        int count              // stack size
 ) {
     /**
-     * Перевіряє, чи відповідає предмет пошуковому запиту (нечутливо до регістру).
+     * Checks if the item matches the given search query (case-insensitive).
      */
     public boolean matches(String query) {
         if (query == null || query.isBlank()) {

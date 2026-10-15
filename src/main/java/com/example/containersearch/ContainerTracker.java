@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Відстежує взаємодію гравця з контейнерами та отримує їх вміст із відкритих екранів.
+ * Tracks player interaction with containers and captures slot contents from opened container screens.
  */
 public class ContainerTracker {
 
@@ -28,7 +28,7 @@ public class ContainerTracker {
     private static String lastInteractedDimension = "";
 
     /**
-     * Фіксує координати та вимір блоку, на який гравець натиснув правою кнопкою миші.
+     * Records the coordinates and dimension of the block the player right-clicked.
      */
     public static void onBlockInteracted(Level level, BlockPos pos) {
         if (level == null || pos == null) return;
@@ -38,19 +38,19 @@ public class ContainerTracker {
     }
 
     /**
-     * Фіксує взаємодію із сутністю-контейнером (наприклад, вагонетка із сундуком).
+     * Records interaction with a container entity (e.g. chest minecart).
      */
     public static void onEntityInteracted(Level level, BlockPos pos) {
         onBlockInteracted(level, pos);
     }
 
     /**
-     * Витягує предмети із слотів відкритого меню контейнера та зберігає їх у кеш.
+     * Extracts items from slots of the opened container screen and saves them to the cache.
      */
     public static void updateContainerItems(AbstractContainerScreen<?> screen) {
         if (screen == null) return;
 
-        // Ігноруємо власний інвентар гравця та режим креативу
+        // Ignore player's own inventory and creative inventory screens
         if (screen instanceof InventoryScreen || screen instanceof CreativeModeInventoryScreen) {
             return;
         }
@@ -61,25 +61,25 @@ public class ContainerTracker {
         BlockPos targetPos = null;
         String dimension = client.level.dimension().identifier().toString();
 
-        // 1. Перевіряємо останній натиснутий блок (в межах 5 секунд)
+        // 1. Check last interacted block (within 5 seconds)
         if (lastInteractedPos != null && (System.currentTimeMillis() - lastInteractedTime < 5000)) {
             targetPos = lastInteractedPos;
             dimension = lastInteractedDimension;
         }
-        // 2. Fallback: перевіряємо блок, на який спрямований погляд гравця
+        // 2. Fallback: check the block the player is directly looking at
         else if (client.hitResult instanceof BlockHitResult hitResult) {
             targetPos = hitResult.getBlockPos();
         }
 
         if (targetPos == null) return;
 
-        // Збираємо предмети зі слотів відкритого контейнера (виключаючи 36 слотів інвентаря гравця)
+        // Collect items from container slots (excluding player's 36 inventory slots)
         List<ItemInfo> items = new ArrayList<>();
         boolean foundContainerSlot = false;
 
         for (Slot slot : screen.getMenu().slots) {
             if (slot.container instanceof Inventory) {
-                // Це слот особистого інвентаря гравця — пропускаємо
+                // This is player's personal inventory slot — skip
                 continue;
             }
             foundContainerSlot = true;
@@ -95,13 +95,13 @@ public class ContainerTracker {
             }
         }
 
-        // Якщо в екрані взагалі немає слотів контейнера — не зберігаємо
+        // Do not save if no container slots were found in the screen
         if (!foundContainerSlot) return;
 
-        // Зберігаємо вміст для поточної координати
+        // Save contents for current coordinates
         ContainerCache.put(dimension, targetPos, items);
 
-        // Якщо це подвійний сундук — автоматично дублюємо вміст для суміжної половинки
+        // If this is a double chest, automatically mirror contents to the adjacent half
         BlockState state = client.level.getBlockState(targetPos);
         if (state.getBlock() instanceof ChestBlock) {
             Direction connected = ChestBlock.getConnectedDirection(state);

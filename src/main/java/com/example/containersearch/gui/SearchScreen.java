@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Екран вибору предметів та пошуку у контейнерах.
- * Містить рядок швидкої фільтрації та скролірований список предметів із реальним відображенням іконок.
+ * Item selection and container search screen.
+ * Contains a real-time filter text box and a scrollable list of items with rendered icons.
  */
 public class SearchScreen extends Screen {
 
@@ -37,7 +37,7 @@ public class SearchScreen extends Screen {
         int boxX = (this.width - boxWidth) / 2;
         int boxY = 30;
 
-        // 1. Поле введення / фільтрації предметів у реальному часі
+        // 1. Real-time item input / filter text box
         searchBox = new EditBox(this.font, boxX, boxY, boxWidth, 20, Component.translatable("gui.containersearch.title"));
         searchBox.setMaxLength(64);
         searchBox.setValue(ContainerSearchClient.getSearchQuery());
@@ -46,7 +46,7 @@ public class SearchScreen extends Screen {
         this.addRenderableWidget(searchBox);
         this.setInitialFocus(searchBox);
 
-        // 2. Скролірований список вибору предметів
+        // 2. Scrollable item selection list
         int listTop = 54;
         int listBottom = this.height - 34;
         int listHeight = Math.max(24, listBottom - listTop);
@@ -54,7 +54,7 @@ public class SearchScreen extends Screen {
         itemList = new ItemSelectionList(this.minecraft, this.width, listHeight, listTop, 24);
         this.addRenderableWidget(itemList);
 
-        // 3. Ініціалізація бази всіх доступних предметів із реєстру (BuiltInRegistries.ITEM)
+        // 3. Initialize registry item cache (BuiltInRegistries.ITEM)
         if (allEntries.isEmpty()) {
             for (Item item : BuiltInRegistries.ITEM) {
                 if (item == Items.AIR) continue;
@@ -66,21 +66,21 @@ public class SearchScreen extends Screen {
             }
         }
 
-        // 4. Заповнення списку з урахуванням поточного запиту
+        // 4. Populate list based on current query
         filterEntries(searchBox.getValue());
 
-        // 5. Нижні кнопки керування
+        // 5. Bottom control buttons
         int btnY = this.height - 28;
         int btnWidth = 135;
 
-        // Кнопка "Знайти"
+        // "Search" button
         Button searchButton = Button.builder(
                 Component.translatable("gui.containersearch.search"),
                 btn -> applySearch()
         ).bounds(this.width / 2 - btnWidth - 5, btnY, btnWidth, 20).build();
         this.addRenderableWidget(searchButton);
 
-        // Кнопка "Скинути підсвічування"
+        // "Reset Highlight" button
         Button clearButton = Button.builder(
                 Component.translatable("gui.containersearch.reset_highlight"),
                 btn -> resetSearch()
@@ -117,12 +117,12 @@ public class SearchScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        // [Enter] — застосувати текстовий запит із поля
+        // [Enter] — apply text query from search box
         if (event.key() == InputConstants.KEY_RETURN || event.key() == InputConstants.KEY_NUMPADENTER) {
             applySearch();
             return true;
         }
-        // [ESC] — скинути підсвічування та закрити меню
+        // [ESC] — reset highlight and close screen
         if (event.key() == InputConstants.KEY_ESCAPE) {
             resetSearch();
             return true;
@@ -132,10 +132,10 @@ public class SearchScreen extends Screen {
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
-        // Затемнений напівпрозорий фон
+        // Dimmed semi-transparent background
         extractor.fill(0, 0, this.width, this.height, 0xA0000000);
 
-        // Заголовок
+        // Screen header
         extractor.centeredText(
                 this.font,
                 Component.literal("§6§lВибір предмета для пошуку §e(Container Search)"),
@@ -144,7 +144,7 @@ public class SearchScreen extends Screen {
                 0xFFFFFFFF
         );
 
-        // Інформація про кількість результатів та кешованих контейнерів
+        // Results and cached container count summary
         int matchingItems = (itemList != null) ? itemList.children().size() : 0;
         int cachedContainers = ContainerCache.getContainerCount();
         String status = "§7Предметів: §a" + matchingItems + "§7  •  Контейнерів у світі: §e" + cachedContainers;

@@ -12,56 +12,56 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.AABB;
 
 /**
- * Утиліти для рендерингу підсвічування контейнерів скрізь стіни через Gizmos API у Minecraft 26.3.
+ * Utility class for rendering container highlights through obstacles via the Gizmos API in Minecraft 26.3.
  */
 public class RenderUtils {
 
     /**
-     * Величина зовнішнього розширення хитбокса (0.02 блока) для повного усунення
-     * Z-fighting та мерехтіння полігонів/ліній при сумісному використанні з ChestESP.
+     * Hitbox expansion amount (0.02 blocks) to completely eliminate
+     * Z-fighting and polygon/line flickering when used concurrently with ChestESP.
      */
     public static final double BOX_EXPAND = 0.02;
 
     /**
-     * Отрисовує виразний неоново-зелений контур крізь стіни із напівпрозорим заповненням граней.
-     * Потовщений контур (3.2f) акуратно обрамляє сундук поверх контурів інших модів (зокрема ChestESP).
+     * Renders a distinctive neon green outline through walls with translucent face fill.
+     * The thickened stroke (3.2f) cleanly frames the container over outlines from other mods (including ChestESP).
      *
-     * @param aabb обмежувальний об'єм контейнера у світових координатах
+     * @param aabb the bounding box of the container in world coordinates
      */
     public static void renderHighlightGizmo(AABB aabb) {
-        // Яскравий насичений неоново-зелений контур (0xFF00FF66) та м'яке напівпрозоре заповнення (0x3000FF66)
+        // Vivid neon green outline (0xFF00FF66) and soft glowing fill (0x3000FF66)
         int strokeColor = 0xFF00FF66;
         int fillColor   = 0x3000FF66;
         float strokeWidth = 3.2f;
 
-        // setAlwaysOnTop() відключає depth test, забезпечуючи видимість крізь будь-які перешкоди
+        // setAlwaysOnTop() disables depth testing, ensuring through-wall visibility
         Gizmos.cuboid(aabb, GizmoStyle.strokeAndFill(strokeColor, strokeWidth, fillColor))
               .setAlwaysOnTop();
     }
 
     /**
-     * Розширює AABB-бокс на величину BOX_EXPAND (0.02) в усі боки.
+     * Expands an AABB bounding box by BOX_EXPAND (0.02) in all directions.
      */
     public static AABB expand(AABB box) {
         return box.inflate(BOX_EXPAND);
     }
 
     /**
-     * Розширює AABB-бокс на задану величину в усі боки.
+     * Expands an AABB bounding box by the specified amount in all directions.
      */
     public static AABB expand(AABB box, double amount) {
         return box.inflate(amount);
     }
 
     /**
-     * Обчислює точний AABB-об'єм контейнера у світових координатах з урахуванням одинарних/подвійних сундуків
-     * та додає зовнішнє розширення (+0.02 блока) для усунення Z-fighting з іншими модами.
+     * Calculates the exact AABB bounding box of a container in world coordinates,
+     * accounting for single/double chests, and applies an outer expansion (+0.02 blocks) to eliminate Z-fighting.
      */
     public static AABB getContainerBoundingBox(Level level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         AABB box;
 
-        // Звичайні сундуки та сундуки-ловушки (з урахуванням подвійних сундуків)
+        // Regular chests and trapped chests (accounting for connected double chests)
         if (state.getBlock() instanceof ChestBlock) {
             double minX = 0.0625;
             double minY = 0.0;
@@ -83,17 +83,17 @@ public class RenderUtils {
                     pos.getX() + maxX, pos.getY() + maxY, pos.getZ() + maxZ
             );
         } else if (state.getBlock() instanceof EnderChestBlock) {
-            // Ендер-сундуки (одинарний об'єм)
+            // Ender chests (single chest volume)
             box = new AABB(
                     pos.getX() + 0.0625, pos.getY(), pos.getZ() + 0.0625,
                     pos.getX() + 0.9375, pos.getY() + 0.875, pos.getZ() + 0.9375
             );
         } else {
-            // Для шалкерів, бочок, роздавачів, воронок, пічок — стандартний блок 1x1x1
+            // Shulker boxes, barrels, dispensers, droppers, hoppers, furnaces — standard 1x1x1 cube block
             box = new AABB(pos);
         }
 
-        // Зовнішнє розширення (+0.02 блока в усі боки) для запобігання Z-fighting та мерехтінню з ChestESP
+        // Outer expansion (+0.02 blocks in all directions) to prevent Z-fighting and shimmering with ChestESP
         return box.inflate(BOX_EXPAND);
     }
 }

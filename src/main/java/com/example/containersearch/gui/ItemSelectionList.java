@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 
 /**
- * Скролірований список вибору предметів на базі ObjectSelectionList (EntryListWidget).
+ * Scrollable item selection list based on ObjectSelectionList.
  */
 public class ItemSelectionList extends ObjectSelectionList<ItemEntry> {
 

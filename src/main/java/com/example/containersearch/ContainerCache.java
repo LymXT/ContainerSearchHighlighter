@@ -18,22 +18,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Потокобезпечний персистентний кеш вмісту контейнерів.
- * Зберігає дані на диск у форматі JSON (config/containersearch/cache_<world_id>.json)
- * окремо для кожного одиночного світу або мультиплеєрного сервера.
+ * Thread-safe persistent container content cache.
+ * Saves cached container data to disk as JSON (config/containersearch/cache_<world_id>.json)
+ * isolated per singleplayer world or multiplayer server.
  */
 public class ContainerCache {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final ExecutorService IO_EXECUTOR = Executors.newSingleThreadExecutor();
 
-    // Структура: dimensionId -> (BlockPos -> список предметів)
+    // Structure: dimensionId -> (BlockPos -> list of items)
     private static final Map<String, Map<BlockPos, List<ItemInfo>>> CACHE = new ConcurrentHashMap<>();
 
     private static String currentWorldId = "";
 
     /**
-     * DTO-моделі для JSON-серіалізації
+     * DTO models for JSON serialization.
      */
     public static class CacheFileDto {
         public int schemaVersion = 1;
@@ -76,7 +76,7 @@ public class ContainerCache {
     }
 
     /**
-     * Визначає унікальний ідентифікатор світу або сервера для розділення файлів кешу.
+     * Resolves a unique identifier for the world or server to isolate cache files.
      */
     public static String getCurrentWorldId(Minecraft client) {
         if (client == null) return "default";
@@ -101,8 +101,8 @@ public class ContainerCache {
     }
 
     /**
-     * Викликається при підключенні до світу або сервера (ClientPlayConnectionEvents.JOIN).
-     * Завантажує збережений JSON-кеш у пам'ять.
+     * Called upon connecting to a world or server (ClientPlayConnectionEvents.JOIN).
+     * Loads the saved JSON cache into memory.
      */
     public static void onJoin(Minecraft client) {
         currentWorldId = getCurrentWorldId(client);
@@ -110,7 +110,8 @@ public class ContainerCache {
     }
 
     /**
-     * Викликається при відключенні від світу або сервера (ClientPlayConnectionEvents.DISCONNECT).
+     * Called upon disconnecting from a world or server (ClientPlayConnectionEvents.DISCONNECT).
+     * Flushes the cache to disk and clears memory.
      */
     public static void onDisconnect() {
         saveToDiskSync();
@@ -119,7 +120,7 @@ public class ContainerCache {
     }
 
     /**
-     * Зберігає або оновлює вміст контейнера за заданими координатами та синхронізує на диск.
+     * Stores or updates the item contents of a container at the given position and synchronizes to disk.
      */
     public static void put(String dimension, BlockPos pos, List<ItemInfo> items) {
         if (dimension == null || pos == null || items == null) return;
@@ -129,7 +130,7 @@ public class ContainerCache {
     }
 
     /**
-     * Видаляє контейнер з кешу (наприклад, при руйнуванні блоку) та оновлює файл на диску.
+     * Removes a container from the cache (e.g. when broken) and updates the disk cache file.
      */
     public static void remove(String dimension, BlockPos pos) {
         if (dimension == null || pos == null) return;
@@ -141,7 +142,7 @@ public class ContainerCache {
     }
 
     /**
-     * Повертає мапу контейнерів для поточного виміру.
+     * Returns the container map for the specified dimension.
      */
     public static Map<BlockPos, List<ItemInfo>> getContainersForDimension(String dimension) {
         if (dimension == null) return Collections.emptyMap();
@@ -150,7 +151,7 @@ public class ContainerCache {
     }
 
     /**
-     * Повертає загальну кількість закешованих контейнерів у поточному світі.
+     * Returns the total count of cached containers across all dimensions in the current world.
      */
     public static int getContainerCount() {
         int total = 0;
@@ -161,7 +162,7 @@ public class ContainerCache {
     }
 
     /**
-     * Рахує кількість контейнерів у поточному вимірі, які містять хоча б один предмет за пошуковим запитом.
+     * Counts the number of containers in the specified dimension that contain at least one item matching the search query.
      */
     public static int countMatchingContainers(String dimension, String query) {
         if (query == null || query.isBlank() || dimension == null) return 0;
@@ -181,14 +182,14 @@ public class ContainerCache {
     }
 
     /**
-     * Очищає весь кеш у пам'яті.
+     * Clears all cached container data from memory.
      */
     public static void clear() {
         CACHE.clear();
     }
 
     /**
-     * Завантажує дані з JSON-файлу: config/containersearch/cache_<world_id>.json
+     * Loads cached container data from disk (config/containersearch/cache_<world_id>.json).
      */
     public static void loadFromDisk() {
         if (currentWorldId == null || currentWorldId.isBlank()) return;
@@ -235,7 +236,7 @@ public class ContainerCache {
     }
 
     /**
-     * Асинхронно записує стан кешу на диск без затримок для рендерингу/гри.
+     * Asynchronously writes the cache state to disk on a background executor without blocking render/game ticks.
      */
     public static void saveToDisk() {
         if (currentWorldId == null || currentWorldId.isBlank()) return;
@@ -246,7 +247,7 @@ public class ContainerCache {
     }
 
     /**
-     * Синхронний запис (використовується при відключенні від сервера).
+     * Synchronously writes the cache state to disk (used during client disconnect).
      */
     public static void saveToDiskSync() {
         if (currentWorldId == null || currentWorldId.isBlank()) return;

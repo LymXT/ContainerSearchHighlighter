@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Locale;
 
 /**
- * Елемент списку предметів із реальною іконкою та локалізованою назвою.
+ * Entry within the item selection list displaying a rendered item icon and localized name.
  */
 public class ItemEntry extends ObjectSelectionList.Entry<ItemEntry> {
 
@@ -56,23 +56,23 @@ public class ItemEntry extends ObjectSelectionList.Entry<ItemEntry> {
         int right = getContentRight();
         int bottom = getContentBottom();
 
-        // Підсвічування фону при наведенні курсору
+        // Background highlight on hover
         if (hovered) {
             extractor.fill(x, y, right, bottom, 0x40FFFFFF);
         }
 
-        // Відображення іконки предмета (drawItem)
+        // Render item icon (drawItem)
         int iconX = x + 4;
         int iconY = y + (getHeight() - 16) / 2;
         extractor.item(this.itemStack, iconX, iconY);
 
-        // Відображення локалізованої назви предмета
+        // Render localized item name
         int textX = iconX + 22;
         int textY = y + (getHeight() - 9) / 2;
         int textColor = hovered ? 0xFFFFFF55 : 0xFFFFFFFF;
         extractor.text(Minecraft.getInstance().font, this.displayName, textX, textY, textColor);
 
-        // Вспливаюча підказка (Tooltip) при наведенні
+        // Tooltip on hover
         if (hovered) {
             extractor.setTooltipForNextFrame(Minecraft.getInstance().font, this.itemStack, mouseX, mouseY);
         }
@@ -80,8 +80,8 @@ public class ItemEntry extends ObjectSelectionList.Entry<ItemEntry> {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (event.button() == 0) { // Лівий клік миші (LMB)
-            // Автоматично обираємо цей предмет для пошуку та закриваємо меню
+        if (event.button() == 0) { // Left mouse button (LMB)
+            // Automatically select this item for search and close the screen
             ContainerSearchClient.setSearchQuery(this.displayName);
             screen.onClose();
             return true;
